@@ -10,9 +10,6 @@ def app(request):
     request.addfinalizer(fixture.destroy)
     return fixture
 
-def setUp(self):
-        self.app = Application()
-
 def test_add_group(app):
         app.login(username="admin", password="secret")
         app.fill_group_form(Group(name="Test1", header="test_header", footer="test_footer"))
