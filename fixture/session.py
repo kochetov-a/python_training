@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+# class for work with sessions
 class SessionHelper:
 
     def __init__(self, app):

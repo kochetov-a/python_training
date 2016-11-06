@@ -1,3 +1,4 @@
+# class for work with group
 class GroupHelper:
 
     def __init__(self, app):
