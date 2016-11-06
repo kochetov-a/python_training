@@ -37,13 +37,19 @@ class Application_c:
         wd.find_element_by_name("address").click()
         wd.find_element_by_name("address").clear()
         wd.find_element_by_name("address").send_keys("02")
-        # submit_new_contact
+
+    def submit_new_contact(self):
+        wd = self.wd
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
-        # return_home_page
+
+    def return_home_page(self):
+        wd = self.wd
         wd.find_element_by_link_text("home").click()
 
     def logout(self):
         wd = self.wd
+        self.submit_new_contact()
+        self.return_home_page()
         wd.find_element_by_link_text("Logout").click()
 
     def destroy(self):
