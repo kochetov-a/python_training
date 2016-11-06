@@ -2,8 +2,8 @@
 
 import pytest
 
-from groupfixture.application import Application
-from groupmodel.group import Group
+from fixture.application_group import Application
+from model.group import Group
 
 @pytest.fixture
 def app(request):
