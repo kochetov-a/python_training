@@ -2,11 +2,11 @@
 
 import pytest
 from contact import Contact
-from application_contact import Application_c
+from application_contact import Application
 
 @pytest.fixture
 def app(request):
-    fixture = Application_c()
+    fixture = Application()
     request.addfinalizer(fixture.destroy)
     return fixture
 
