@@ -1,4 +1,4 @@
-# class for work with group
+# Класс для работы с группами
 class GroupHelper:
 
     def __init__(self, app):
@@ -35,6 +35,7 @@ class GroupHelper:
         self.change_filed_value("group_header", group.header)
         self.change_filed_value("group_footer", group.footer)
 
+    # изменение содержимого полей групп
     def change_filed_value(self, field_name, text):
         wd = self.app.wd
         if text is not None:
@@ -42,6 +43,7 @@ class GroupHelper:
             wd.find_element_by_name(field_name).clear()
             wd.find_element_by_name(field_name).send_keys(text)
 
+    # удаление первой группы из списка
     def delete_first_group(self):
         wd = self.app.wd
         self.open_group_page()
@@ -50,6 +52,7 @@ class GroupHelper:
         wd.find_element_by_name("delete").click()
         self.return_to_group_page()
 
+    # Модификация первой группы из списка
     def modify_first_group(self, new_group_data):
         wd = self.app.wd
         self.open_group_page()
@@ -60,3 +63,9 @@ class GroupHelper:
         # submit change group name
         wd.find_element_by_name("update").click()
         self.return_to_group_page()
+
+    # Подсчет количества групп на странице
+    def count_group(self):
+        wd = self.app.wd
+        self.open_group_page()
+        return len(wd.find_elements_by_name("selected[]"))

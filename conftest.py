@@ -14,6 +14,7 @@ def app(request):
     else:
         if not fixture.is_valid(): # Если фикстура не валидна
             fixture = Application() # Инициализируем фикстуру
+    fixture.open_home_page()
     fixture.session.ensure_login(username="admin", password="secret") # Выполняем логин в любом случае
     return fixture
 
