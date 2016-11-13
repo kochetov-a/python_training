@@ -18,3 +18,7 @@ class SessionHelper:
     def logout(self):
         wd = self.app.wd
         wd.find_element_by_link_text("Logout").click()
+
+    # удаляем фикстуру после завершения теста
+    def destroy(self):
+        self.app.wd.quit()
