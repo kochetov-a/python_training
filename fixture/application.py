@@ -5,10 +5,10 @@ from fixture.contact import ContactHelper
 
 class Application:
 
-    # start the browser
+    # запуск браузера
     def __init__(self):
         self.wd = WebDriver()
-        self.wd.implicitly_wait(60)
+        self.wd.implicitly_wait(5)
         self.session = SessionHelper(self)
         self.group = GroupHelper(self)
         self.contact = ContactHelper(self)
@@ -16,16 +16,16 @@ class Application:
     # проверка валидности фикстуры
     def is_valid(self):
         try:
-            self.wd.current_url
-            return True
+            self.wd.current_url # Если браузер может вернуть адрес страницы
+            return True # То фикстура валидна
         except:
             return False
 
-    # function
+    # открытие главной страницы
     def open_home_page(self):
         wd = self.wd
         wd.get("http://localhost/addressbook/")
 
-    # delete fixture
+    # разрушение фикстуры
     def destroy(self):
         self.wd.quit()
