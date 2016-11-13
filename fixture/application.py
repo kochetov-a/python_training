@@ -13,6 +13,14 @@ class Application:
         self.group = GroupHelper(self)
         self.contact = ContactHelper(self)
 
+    # проверка валидности фикстуры
+    def is_valid(self):
+        try:
+            self.wd.current_url
+            return True
+        except:
+            return False
+
     # function
     def open_home_page(self):
         wd = self.wd
