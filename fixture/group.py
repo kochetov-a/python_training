@@ -7,7 +7,7 @@ class GroupHelper:
     # Открытие страницы с группами (http://localhost/addressbook/group.php)
     def open_group_page(self):
         wd = self.app.wd
-        # Если открыта НЕ страница с группами, то перейти на неё
+        # Если открыта НЕ страница с группами, то перейти на неё (проверка по URL и наличию кнопки)
         if not (wd.current_url.endswith("/group.php") and len(wd.find_elements_by_name("new")) > 0):
             wd.find_element_by_link_text("groups").click()
 
