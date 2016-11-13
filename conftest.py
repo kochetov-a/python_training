@@ -12,17 +12,23 @@ def app(request):
     if fixture is None:
         fixture = Application()
     else:
-        if not fixture.is_valid(): # Если фикстура не валидна
-            fixture = Application() # Инициализируем фикстуру
+        # Если фикстура не валидна
+        if not fixture.is_valid():
+            # Инициализируем фикстуру
+            fixture = Application()
+    # Открываем главную страницу в любом случае
     fixture.open_home_page()
-    fixture.session.ensure_login(username="admin", password="secret") # Выполняем логин в любом случае
+    # Выполняем логин в любом случае
+    fixture.session.ensure_login(username="admin", password="secret")
     return fixture
 
 # Фикстура выхода из приложения
 @pytest.fixture (scope="session", autouse=True)
 def stop(request):
     def fin():
-        fixture.session.ensure_logout() # Убеждаемся что пользователь вылогинился
-        fixture.session.destroy() # Разрушаем фикстуру
+        # Убеждаемся что пользователь вылогинился
+        fixture.session.ensure_logout()
+        # Разрушаем фикстуру
+        fixture.session.destroy()
     request.addfinalizer(fin)
     return fixture

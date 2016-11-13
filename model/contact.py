@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# Конструктор класса контактов
 class Contact:
 
     def __init__(self, first_name=None, second_name=None, last_name=None, company_name=None):
