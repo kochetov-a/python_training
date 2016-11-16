@@ -41,7 +41,7 @@ class SessionHelper:
     def is_logged_in_as(self, username):
         wd = self.app.wd
         # Если на странице есть элемент с текстом который соответсвует имени пользователя, то есть логин
-        return wd.find_element_by_xpath("//div/div/[1]/form/b").text == "("+username+")"
+        return wd.find_element_by_xpath("//div/div[1]/form/b").text == "("+username+")"
 
     # Функция проверки логина во время прогона тестов
     def ensure_login(self, username, password):
