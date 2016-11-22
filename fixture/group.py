@@ -57,18 +57,30 @@ class GroupHelper:
 
     # Удаление первой группы из списка
     def delete_first_group(self):
+        self.delete_group_by_index(0)
+
+    # Функция выбора случайной группы из списка
+    def select_group_by_index(self, index):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click()
+
+    # Удаление случайной группы из списка
+    def delete_group_by_index(self, index):
         wd = self.app.wd
         self.open_group_page()
-        self.select_first_group()
-        wd.find_element_by_name("delete").click() # Удаляем первую группу из списка
+        self.select_group_by_index(index) # Выбираем группу из списка по индексу
+        wd.find_element_by_name("delete").click()
         self.return_to_group_page()
         self.group_cache = None
 
-    # Модификация первой группы из списка
     def modify_first_group(self, new_group_data):
+        self.modify_group_by_index(0)
+
+    # Модификация первой группы из списка
+    def modify_group_by_index(self, index, new_group_data):
         wd = self.app.wd
         self.open_group_page()
-        self.select_first_group()
+        self.select_group_by_index(index)
         # Открываем форму для редактирования
         wd.find_element_by_name("edit").click()
         # Заполняем форму новым содержимым (переменная "new_group_data")
