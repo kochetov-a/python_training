@@ -10,4 +10,4 @@ def test_delete_first_group(app):
     new_groups = app.group.get_group_list()  # Сохранение списка групп ПОСЛЕ удаления
     assert len(old_groups) - 1 == len(new_groups)  # Сравнение что на одну группу стало меньше после добавления
     old_groups[0:1] = []  # Удаляем первую группу из старого списка
-    assert old_groups == new_groups # Сравнение что списки групп равны
+    assert old_groups == new_groups  # Сравнение что списки групп равны

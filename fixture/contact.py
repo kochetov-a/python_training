@@ -16,6 +16,7 @@ class ContactHelper:
         # submit_new_contact
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
         self.return_to_home_page()
+        self.contact_cache = None
 
     # Функция заполнения формы создания нового контакта
     def fill_contact_form(self, contact):
@@ -43,6 +44,7 @@ class ContactHelper:
         wd.find_element_by_name("selected[]").click()
         wd.find_element_by_xpath("//div[@id='content']/form[2]/div[2]/input").click()
         wd.switch_to_alert().accept()
+        self.contact_cache = None
 
     # Функция модификации первого контакта из списка
     def modify_first_contact(self, new_contact_data):
@@ -52,6 +54,7 @@ class ContactHelper:
         self.fill_contact_form(new_contact_data)  # submit_new_contact
         wd.find_element_by_name("update").click()
         self.return_to_home_page()
+        self.contact_cache = None
 
     # Подсчет количества контактов на странице
     def count_contact(self):
@@ -60,16 +63,19 @@ class ContactHelper:
         # Функция возвращает количество найденных на странице элементов
         return len(wd.find_elements_by_name("selected[]"))
 
+    contact_cache = None  # Переменная для кеша списка контактов
+
     # Получение списка контактов на странице
     def get_contact_list(self):
-        wd = self.app.wd
-        self.return_to_home_page()
-        contacts = [] # Создание пустого списка "contacts"
-        for row in wd.find_elements_by_name("entry"):  # Получение списка строк на странице
-            cells = row.find_elements_by_tag_name("td")  # Получение содержимого ячеек из строк
-            id = row.find_element_by_name("selected[]").get_attribute("value") # id из первой ячейки
-            f_name = cells[2].text # Имя из третьей ячейки
-            l_name = cells[1].text # Фамилию из второй ячейки
-            # Заполнение списка групп полученными значениями
-            contacts.append(Contact(id=id, first_name=f_name, last_name=l_name))
-        return contacts # Возвращаем список контактов
+        if self.contact_cache is None: # Если кеш списка контактов пуст, то заполняем его
+            wd = self.app.wd
+            self.return_to_home_page()
+            self.contact_cache = []  # Создание пустого списка "contacts"
+            for row in wd.find_elements_by_name("entry"):  # Получение списка строк на странице
+                cells = row.find_elements_by_tag_name("td")  # Получение содержимого ячеек из строк
+                id = row.find_element_by_name("selected[]").get_attribute("value") # id из первой ячейки
+                f_name = cells[2].text # Имя из третьей ячейки
+                l_name = cells[1].text # Фамилию из второй ячейки
+                # Заполнение списка групп полученными значениями
+                self.contact_cache.append(Contact(id=id, first_name=f_name, last_name=l_name))
+        return list(self.contact_cache)  # Возвращаем список контактов

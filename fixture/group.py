@@ -27,6 +27,7 @@ class GroupHelper:
         # submit_group_creation
         wd.find_element_by_name("submit").click()
         self.return_to_group_page()
+        self.group_cache = None
 
     # Функция выбора первой группы из списка
     def select_first_group(self):
@@ -61,6 +62,7 @@ class GroupHelper:
         self.select_first_group()
         wd.find_element_by_name("delete").click() # Удаляем первую группу из списка
         self.return_to_group_page()
+        self.group_cache = None
 
     # Модификация первой группы из списка
     def modify_first_group(self, new_group_data):
@@ -74,6 +76,7 @@ class GroupHelper:
         # Подтверждаем изменения
         wd.find_element_by_name("update").click()
         self.return_to_group_page()
+        self.group_cache = None
 
     # Подсчет количества групп на странице
     def count_group(self):
@@ -82,15 +85,17 @@ class GroupHelper:
         # Функция возвращает количество найденных на странице элементов
         return len(wd.find_elements_by_name("selected[]"))
 
+    group_cache = None # Переменная для кеша списка групп
+
     # Получение списка групп на странице
     def get_group_list(self):
-        wd = self.app.wd
-        self.open_group_page()
-        groups = []  # Создание пустого списка "groups"
-        # Поиск элементов групп на странице
-        for element in wd.find_elements_by_css_selector("span.group"):
-            text = element.text  # Получение названия группы
-            id = element.find_element_by_name("selected[]").get_attribute("value")  # Получение id группы
-            # Заполнение списка групп полученными значениями
-            groups.append(Group(name=text, id=id))
-        return groups
+        if self.group_cache is None:  # Если кеш списка групп пуст, то заполняем его
+            wd = self.app.wd
+            self.open_group_page()
+            self.group_cache = []  # Создание пустого списка "groups"
+            for element in wd.find_elements_by_css_selector("span.group"):  # Получение списка групп на странице
+                text = element.text  # Получение названия группы
+                id = element.find_element_by_name("selected[]").get_attribute("value")  # Получение id группы
+                # Заполнение списка групп полученными значениями
+                self.group_cache.append(Group(name=text, id=id))
+        return list(self.group_cache)  # Возвращаем список групп
