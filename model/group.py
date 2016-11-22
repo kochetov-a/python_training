@@ -11,12 +11,15 @@ class Group:
         self.footer = footer
         self.id = id
 
-    def __repr__(self):  # Переопределение функции вывода значений
+    # Переопределение функции вывода значений для групп
+    def __repr__(self):
         return "%s:%s" % (self.id, self.name)
 
-    def __eq__(self, other):  # Переопределение функции сравнения
+    # Переопределение функции сравнения групп
+    def __eq__(self, other):
         return (self.id is None or other.id is None or self.id == other.id) and self.name == other.name
 
+    # Функция возвращает максимальный id или (если он None) максимальное число
     def id_or_max(self):
         if self.id:
             return int(self.id)

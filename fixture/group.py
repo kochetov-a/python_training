@@ -86,14 +86,11 @@ class GroupHelper:
     def get_group_list(self):
         wd = self.app.wd
         self.open_group_page()
-        # Создание пустого списка "groups"
-        groups = []
+        groups = []  # Создание пустого списка "groups"
         # Поиск элементов групп на странице
         for element in wd.find_elements_by_css_selector("span.group"):
-            # Получение названия группы
-            text = element.text
-            # Получение id группы
-            id = element.find_element_by_name("selected[]").get_attribute("value")
+            text = element.text  # Получение названия группы
+            id = element.find_element_by_name("selected[]").get_attribute("value")  # Получение id группы
             # Заполнение списка групп полученными значениями
             groups.append(Group(name=text, id=id))
         return groups
