@@ -38,21 +38,31 @@ class ContactHelper:
         wd = self.app.wd
         wd.find_element_by_link_text("home").click()
 
-    # Функция удаления первого контакта из списка
+    # Функция удаления первого контакта из списка (не используется)
     def delete_first_contact(self):
         wd = self.app.wd
-        wd.find_element_by_name("selected[]").click()
+        self.delete_contact_by_index(0)
+
+    # Функция удаления случайного контакта из списка
+    def delete_contact_by_index(self, index):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click()
         wd.find_element_by_xpath("//div[@id='content']/form[2]/div[2]/input").click()
         wd.switch_to_alert().accept()
         self.contact_cache = None
 
-    # Функция модификации первого контакта из списка
+    # Функция модификации первого контакта из списка (не используется)
     def modify_first_contact(self, new_contact_data):
         wd = self.app.wd
-        wd.find_element_by_name("selected[]").click()  # select first contact
-        wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr[2]/td[8]/a/img").click()  # click edit
-        self.fill_contact_form(new_contact_data)  # submit_new_contact
-        wd.find_element_by_name("update").click()
+        self.modify_contact_by_index(0)
+
+    # Функция модификации случайного контакта из списка
+    def modify_contact_by_index(self, index, new_contact_data):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click() # Отмечаем чек-бокс выбранного контакта
+        wd.find_elements_by_xpath("//table[@id='maintable']/tbody/tr/td[8]/a/img")[index].click() # Нажимаем "Edit"
+        self.fill_contact_form(new_contact_data)  # Изменяем данные контакта
+        wd.find_element_by_name("update").click() # Нажимаем кнопку "Update" для применение изменений
         self.return_to_home_page()
         self.contact_cache = None
 
