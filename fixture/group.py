@@ -1,3 +1,5 @@
+from model.group import Group
+
 # Класс-помощник для работы с группами
 class GroupHelper:
 
@@ -25,6 +27,7 @@ class GroupHelper:
         # submit_group_creation
         wd.find_element_by_name("submit").click()
         self.return_to_group_page()
+        self.group_cache = None
 
     # Функция выбора первой группы из списка
     def select_first_group(self):
@@ -54,17 +57,30 @@ class GroupHelper:
 
     # Удаление первой группы из списка
     def delete_first_group(self):
+        self.delete_group_by_index(0)
+
+    # Функция выбора случайной группы из списка
+    def select_group_by_index(self, index):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click()
+
+    # Удаление случайной группы из списка
+    def delete_group_by_index(self, index):
         wd = self.app.wd
         self.open_group_page()
-        self.select_first_group()
-        wd.find_element_by_name("delete").click() # Удаляем первую группу из списка
+        self.select_group_by_index(index) # Выбираем группу из списка по индексу
+        wd.find_element_by_name("delete").click()
         self.return_to_group_page()
+        self.group_cache = None
+
+    def modify_first_group(self, new_group_data):
+        self.modify_group_by_index(0)
 
     # Модификация первой группы из списка
-    def modify_first_group(self, new_group_data):
+    def modify_group_by_index(self, index, new_group_data):
         wd = self.app.wd
         self.open_group_page()
-        self.select_first_group()
+        self.select_group_by_index(index)
         # Открываем форму для редактирования
         wd.find_element_by_name("edit").click()
         # Заполняем форму новым содержимым (переменная "new_group_data")
@@ -72,6 +88,7 @@ class GroupHelper:
         # Подтверждаем изменения
         wd.find_element_by_name("update").click()
         self.return_to_group_page()
+        self.group_cache = None
 
     # Подсчет количества групп на странице
     def count_group(self):
@@ -79,3 +96,18 @@ class GroupHelper:
         self.open_group_page()
         # Функция возвращает количество найденных на странице элементов
         return len(wd.find_elements_by_name("selected[]"))
+
+    group_cache = None # Переменная для кеша списка групп
+
+    # Получение списка групп на странице
+    def get_group_list(self):
+        if self.group_cache is None:  # Если кеш списка групп пуст, то заполняем его
+            wd = self.app.wd
+            self.open_group_page()
+            self.group_cache = []  # Создание пустого списка "groups"
+            for element in wd.find_elements_by_css_selector("span.group"):  # Получение списка групп на странице
+                text = element.text  # Получение названия группы
+                id = element.find_element_by_name("selected[]").get_attribute("value")  # Получение id группы
+                # Заполнение списка групп полученными значениями
+                self.group_cache.append(Group(name=text, id=id))
+        return list(self.group_cache)  # Возвращаем список групп
