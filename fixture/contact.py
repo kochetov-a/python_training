@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from model.contact import Contact
+import re
 
 # Класс-помощник для работы с контактами
 class ContactHelper:
@@ -56,16 +57,6 @@ class ContactHelper:
         wd = self.app.wd
         self.modify_contact_by_index(0)
 
-    # Функция модификации случайного контакта из списка
-    def modify_contact_by_index(self, index, new_contact_data):
-        wd = self.app.wd
-        wd.find_elements_by_name("selected[]")[index].click() # Отмечаем чек-бокс выбранного контакта
-        wd.find_elements_by_xpath("//table[@id='maintable']/tbody/tr/td[8]/a/img")[index].click() # Нажимаем "Edit"
-        self.fill_contact_form(new_contact_data)  # Изменяем данные контакта
-        wd.find_element_by_name("update").click() # Нажимаем кнопку "Update" для применение изменений
-        self.return_to_home_page()
-        self.contact_cache = None
-
     # Подсчет количества контактов на странице
     def count_contact(self):
         wd = self.app.wd
@@ -77,15 +68,67 @@ class ContactHelper:
 
     # Получение списка контактов на странице
     def get_contact_list(self):
-        if self.contact_cache is None: # Если кеш списка контактов пуст, то заполняем его
+        if self.contact_cache is None:  # Если кеш списка контактов пуст, то заполняем его
             wd = self.app.wd
             self.return_to_home_page()
             self.contact_cache = []  # Создание пустого списка "contacts"
             for row in wd.find_elements_by_name("entry"):  # Получение списка строк на странице
                 cells = row.find_elements_by_tag_name("td")  # Получение содержимого ячеек из строк
-                id = row.find_element_by_name("selected[]").get_attribute("value") # id из первой ячейки
-                f_name = cells[2].text # Имя из третьей ячейки
-                l_name = cells[1].text # Фамилию из второй ячейки
-                # Заполнение списка групп полученными значениями
-                self.contact_cache.append(Contact(id=id, first_name=f_name, last_name=l_name))
+                id = row.find_element_by_name("selected[]").get_attribute("value")  # id из первой ячейки
+                first_name = cells[2].text  # Имя из третьей ячейки
+                last_name = cells[1].text  # Фамилию из второй ячейки
+                all_phones = cells[5].text.splitlines()
+                self.contact_cache.append(Contact(id=id, first_name=first_name, last_name=last_name,
+                                                  home_phone=all_phones[0], mobile_phone=all_phones[1],
+                                                  work_phone=all_phones[2], secondary_phone=all_phones[3]))
         return list(self.contact_cache)  # Возвращаем список контактов
+
+
+    # Функция модификации случайного контакта из списка (по индексу)
+    def modify_contact_by_index(self, index, new_contact_data):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click()  # Отмечаем чек-бокс выбранного контакта
+        wd.find_elements_by_xpath("//table[@id='maintable']/tbody/tr/td[8]/a/img")[index].click()  # Нажимаем "Edit"
+        self.fill_contact_form(new_contact_data)  # Изменяем данные контакта
+        wd.find_element_by_name("update").click()  # Нажимаем кнопку "Update" для применение изменений
+        self.return_to_home_page()
+        self.contact_cache = None
+
+    # Функция просмотра детальной информации контакта из списка по индексу
+    def open_contact_view_by_index(self, index):
+        wd = self.app.wd
+        wd.find_elements_by_xpath("//table[@id='maintable']/tbody/tr/td[7]/a/img")[index].click()  # Нажимаем "Details"
+
+    # Функция чтения информации из формы редактирования
+    def open_contact_to_edit_by_index(self, index):
+        wd = self.app.wd
+        wd.find_elements_by_xpath("//table[@id='maintable']/tbody/tr/td[8]/a/img")[index].click()  # Нажимаем "Edit"
+
+    # Функция получения номеров телефона из страницы редактирования
+    def get_contact_info_from_edit_page(self, index):
+        wd = self.app.wd
+        self.open_contact_to_edit_by_index(index)   # Открываем страницу редактирования контактов
+        first_name = wd.find_element_by_name("firstname").get_attribute("value")
+        last_name = wd.find_element_by_name("lastname").get_attribute("value")
+        id = wd.find_element_by_name("id").get_attribute("value")
+        home_phone = wd.find_element_by_name("home").get_attribute("value")
+        mobile_phone = wd.find_element_by_name("mobile").get_attribute("value")
+        work_phone = wd.find_element_by_name("work").get_attribute("value")
+        secondary_phone = wd.find_element_by_name("phone2").get_attribute("value")
+        self.return_to_home_page()
+        return Contact(first_name=first_name, last_name=last_name, id=id,
+                       home_phone=home_phone, mobile_phone=mobile_phone,
+                       work_phone=work_phone, secondary_phone=secondary_phone)
+
+    # Функция получения номеров телефона из страницы просмотра детальной информации
+    def get_contact_from_view_page(self, index):
+        wd = self.app.wd
+        self.open_contact_view_by_index(index)  # Открываем страницу просмотра информации
+        text = wd.find_element_by_id("content").text  # Находим блок с телефонами
+        home_phone = re.search("H: (.*)", text).group(1)  # Получаем домашний телефон
+        work_phone = re.search("W: (.*)", text).group(1)  # Получаем рабочий телефон
+        mobile_phone = re.search("M: (.*)", text).group(1)   # Получаем мобильный телефон
+        secondary_phone = re.search("P: (.*)", text).group(1)   # Получаем дополнительный телефон
+        self.return_to_home_page()   # Возвращаемся на главную страницу
+        return Contact(home_phone=home_phone, mobile_phone=mobile_phone,
+                       work_phone=work_phone, secondary_phone=secondary_phone)
