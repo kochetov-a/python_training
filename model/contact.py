@@ -8,7 +8,7 @@ class Contact:
     def __init__(self, first_name=None, second_name=None,
                  last_name=None, company_name=None, id=None,
                  home_phone=None, mobile_phone=None, work_phone=None,
-                 secondary_phone=None):
+                 secondary_phone=None, all_phones_from_home_page=None):
         self.first_name = first_name
         self.second_name = second_name
         self.last_name = last_name
@@ -18,6 +18,7 @@ class Contact:
         self.mobile_phone = mobile_phone
         self.work_phone = work_phone
         self.secondary_phone = secondary_phone
+        self.all_phones_from_home_page = all_phones_from_home_page
 
     # Переопределение функции вывода значений для контактов
     def __repr__(self):
