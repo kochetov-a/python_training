@@ -80,7 +80,7 @@ class ContactHelper:
                 all_emails = cells[4].text  # Все e-mail'ы из ячейки №4
                 all_phones = cells[5].text  # Все телефоны из ячейки №5
                 self.contact_cache.append(Contact(id=id, first_name=first_name, last_name=last_name,
-                                                  address=address, all_phones_from_home_page=all_phones,
+                                                  address=address, all_phones=all_phones,
                                                   all_emails=all_emails))
         return list(self.contact_cache)  # Возвращаем список контактов
 
