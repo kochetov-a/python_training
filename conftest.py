@@ -10,6 +10,7 @@ import importlib
 fixture = None
 target = None
 
+
 # Фикстура логина на сайт с проверкой валидности фикстуры
 @pytest.fixture
 def app(request):
@@ -28,6 +29,7 @@ def app(request):
     fixture.session.ensure_login(username=target["username"], password=target["password"])
     return fixture
 
+
 # Фикстура выхода из приложения
 @pytest.fixture (scope="session", autouse=True)
 def stop(request):
@@ -38,6 +40,7 @@ def stop(request):
         fixture.session.destroy()
     request.addfinalizer(fin)
     return fixture
+
 
 def pytest_addoption(parser):
     parser.addoption("--target", action="store", default="target.json")
@@ -53,11 +56,13 @@ def pytest_generate_tests(metafunc):
             test_data = load_from_json(fixture[5:])
             metafunc.parametrize(fixture, test_data, ids=[str(x) for x in test_data])
 
-# Импортируем тестовые данные из модуля
+
+# Импортируем тестовые данные из файла .py с тестовыми данными (groups.py или contacts.py)
 def load_from_module(module):
     return importlib.import_module("data.%s" % module).data_for_group
 
 
+# Получаем тестовые данные из json-файла (groups.json или contacts.json)
 def load_from_json(file):
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/%s.json" % file)) as f:
-        return jsonpickle.decode(f.read())
+        return jsonpickle.decode(f.read())  # Читаем файл json
