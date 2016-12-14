@@ -1,33 +1,45 @@
-# -*- coding: utf-8 -*-
-
 import pytest
 from fixture.application import Application
 import jsonpickle
 import json
 import os.path
 import importlib
+from fixture.db import DbFixture
 
 fixture = None
 target = None
 
+def load_config(file):
+    global target  # Объявление глобальной переменной для файла конфигурации
+    if target is None:
+        # Получаем месторасположение конфига из переменной __file__ и объеденяем его с "target.json"
+        config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file)
+        with open(config_file) as f:  # Пробуем открыть файл конфигурации и присвоить его переменной "f"
+            target = json.load(f)  # Загружаем в переменную "target" содержимое файла
+    return target
 
 # Фикстура логина на сайт с проверкой валидности фикстуры
 @pytest.fixture
 def app(request):
     global fixture  # Объявление глобальной переменной для фикстуры
-    global target  # Объявление глобальной переменной для файла конфигурации
-    if target is None:
-        # Получаем месторасположение конфига из переменной __file__ и объеденяем его с "target.json"
-        config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), request.config.getoption("--target"))
-        with open(config_file) as f:  # Пробуем открыть файл конфигурации и присвоить его переменной "f"
-            target = json.load(f)  # Загружаем в переменную "target" содержимое файла
+    web_config = load_config(request.config.getoption("--target"))["web"]
     if fixture is None or not fixture.is_valid():
-        fixture = Application(browser=target["browser"], base_url=target["baseUrl"])
+        fixture = Application(browser=web_config["browser"], base_url=web_config["baseUrl"])
     # Открываем главную страницу в любом случае
     fixture.open_home_page()
     # Выполняем логин в любом случае
-    fixture.session.ensure_login(username=target["username"], password=target["password"])
+    fixture.session.ensure_login(username=web_config["username"], password=web_config["password"])
     return fixture
+
+@pytest.fixture (scope="session", autouse=True)
+def db(request):
+    db_config = load_config(request.config.getoption("--target"))["db"]
+    dbfixture = DbFixture(host=db_config["host"], name=db_config["name"], user=db_config["user"],
+                          password=db_config["password"])
+    def fin():
+        dbfixture.destroy()
+    request.addfinalizer(fin)
+    return dbfixture
 
 
 # Фикстура выхода из приложения
