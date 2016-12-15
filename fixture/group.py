@@ -97,7 +97,7 @@ class GroupHelper:
         # Функция возвращает количество найденных на странице элементов
         return len(wd.find_elements_by_name("selected[]"))
 
-    group_cache = None # Переменная для кеша списка групп
+    group_cache = None  # Переменная для кеша списка групп
 
     # Получение списка групп на странице
     def get_group_list(self):
@@ -111,3 +111,17 @@ class GroupHelper:
                 # Заполнение списка групп полученными значениями
                 self.group_cache.append(Group(name=text, id=id))
         return list(self.group_cache)  # Возвращаем список групп
+
+    # Выбор группы по id из базы данных для удаления
+    def delete_group_by_id(self, id):
+        wd = self.app.wd
+        self.open_group_page()
+        self.select_group_by_id(id)  # Выбираем группу из списка по индексу
+        wd.find_element_by_name("delete").click()
+        self.return_to_group_page()
+        self.group_cache = None
+
+    # Выбор группы по id из базы данных
+    def select_group_by_id(self, id):
+        wd = self.app.wd
+        wd.find_element_by_css_selector("input[value='%s']" % id).click()

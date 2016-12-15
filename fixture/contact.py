@@ -127,15 +127,9 @@ class ContactHelper:
                        work_phone=work_phone, secondary_phone=secondary_phone,
                        address=address, email=email, email_2=email_2, email_3=email_3)
 
-    # # Функция получения номеров телефона из страницы просмотра детальной информации
-    # def get_contact_from_view_page(self, index):
-    #     wd = self.app.wd
-    #     self.open_contact_view_by_index(index)  # Открываем страницу просмотра информации
-    #     text = wd.find_element_by_id("content").text  # Находим блок с телефонами
-    #     home_phone = re.search("H: (.*)", text).group(1)  # Получаем домашний телефон
-    #     work_phone = re.search("W: (.*)", text).group(1)  # Получаем рабочий телефон
-    #     mobile_phone = re.search("M: (.*)", text).group(1)   # Получаем мобильный телефон
-    #     secondary_phone = re.search("P: (.*)", text).group(1)   # Получаем дополнительный телефон
-    #     self.return_to_home_page()   # Возвращаемся на главную страницу
-    #     return Contact(home_phone=home_phone, mobile_phone=mobile_phone,
-    #                    work_phone=work_phone, secondary_phone=secondary_phone)
+    def delete_contact_by_id(self, id):
+        wd = self.app.wd
+        wd.find_element_by_css_selector("input[value='%s']" % id).click()
+        wd.find_element_by_xpath("//div[@id='content']/form[2]/div[2]/input").click()
+        wd.switch_to_alert().accept()
+        self.contact_cache = None

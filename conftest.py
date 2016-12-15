@@ -9,6 +9,7 @@ from fixture.db import DbFixture
 fixture = None
 target = None
 
+
 def load_config(file):
     global target  # Объявление глобальной переменной для файла конфигурации
     if target is None:
@@ -17,6 +18,7 @@ def load_config(file):
         with open(config_file) as f:  # Пробуем открыть файл конфигурации и присвоить его переменной "f"
             target = json.load(f)  # Загружаем в переменную "target" содержимое файла
     return target
+
 
 # Фикстура логина на сайт с проверкой валидности фикстуры
 @pytest.fixture
@@ -31,7 +33,9 @@ def app(request):
     fixture.session.ensure_login(username=web_config["username"], password=web_config["password"])
     return fixture
 
-@pytest.fixture (scope="session", autouse=True)
+
+# Фикстура для подключения базы данных
+@pytest.fixture(scope="session")
 def db(request):
     db_config = load_config(request.config.getoption("--target"))["db"]
     dbfixture = DbFixture(host=db_config["host"], name=db_config["name"], user=db_config["user"],
@@ -43,7 +47,7 @@ def db(request):
 
 
 # Фикстура выхода из приложения
-@pytest.fixture (scope="session", autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def stop(request):
     def fin():
         # Убеждаемся что пользователь вылогинился
@@ -54,8 +58,16 @@ def stop(request):
     return fixture
 
 
+# Проверка наличия ключа для проверки пользовательского интерфейса
+@pytest.fixture
+def check_ui(request):
+    return request.config.getoption("--check_ui")
+
+
+# Парсер ключей из командной строки
 def pytest_addoption(parser):
     parser.addoption("--target", action="store", default="target.json")
+    parser.addoption("--check_ui", action="store_true")
 
 
 # Генератор тестов для динамической подставновки параметров
