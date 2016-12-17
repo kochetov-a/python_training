@@ -1,5 +1,6 @@
 from model.group import Group
 
+
 # Класс-помощник для работы с группами
 class GroupHelper:
 
@@ -59,7 +60,7 @@ class GroupHelper:
     def delete_first_group(self):
         self.delete_group_by_index(0)
 
-    # Функция выбора случайной группы из списка
+    # Функция выбора группы по index
     def select_group_by_index(self, index):
         wd = self.app.wd
         wd.find_elements_by_name("selected[]")[index].click()
@@ -68,7 +69,7 @@ class GroupHelper:
     def delete_group_by_index(self, index):
         wd = self.app.wd
         self.open_group_page()
-        self.select_group_by_index(index) # Выбираем группу из списка по индексу
+        self.select_group_by_index(index)  # Выбираем группу из списка по индексу
         wd.find_element_by_name("delete").click()
         self.return_to_group_page()
         self.group_cache = None
@@ -76,13 +77,14 @@ class GroupHelper:
     def modify_first_group(self, new_group_data):
         self.modify_group_by_index(0)
 
-    # Модификация первой группы из списка
+    # Модификация группы по index
     def modify_group_by_index(self, index, new_group_data):
         wd = self.app.wd
         self.open_group_page()
         self.select_group_by_index(index)
         # Открываем форму для редактирования
         wd.find_element_by_name("edit").click()
+        self.app.wd.implicitly_wait(20)
         # Заполняем форму новым содержимым (переменная "new_group_data")
         self.fill_group_form(new_group_data)
         # Подтверждаем изменения
@@ -118,6 +120,19 @@ class GroupHelper:
         self.open_group_page()
         self.select_group_by_id(id)  # Выбираем группу из списка по индексу
         wd.find_element_by_name("delete").click()
+        self.return_to_group_page()
+        self.group_cache = None
+
+    # Модификация группы по id
+    def modify_group_by_id(self, id, new_group_data):
+        wd = self.app.wd
+        self.open_group_page()
+        self.select_group_by_id(id)  # Выбираем группу из списка по индексу
+        wd.find_element_by_name("edit").click()
+        # Заполняем форму новым содержимым (переменная "new_group_data")
+        self.fill_group_form(new_group_data)
+        # Подтверждаем изменения
+        wd.find_element_by_name("update").click()
         self.return_to_group_page()
         self.group_cache = None
 
