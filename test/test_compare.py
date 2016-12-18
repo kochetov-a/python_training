@@ -2,20 +2,22 @@
 
 import re
 from random import randrange
+from model.group import Group
+from model.contact import Contact
 
 
-# Тест сравнения данных контакта с главной страницы с данными из формы редактирования
-def test_compare_data_from_home_page(app):
+# Тест сравнения данных контакта с главной страницы с данными из базы данных
+def test_compare_data_from_home_page(app, db):
     index = randrange(len(app.contact.get_contact_list()))  # Получаем значение для случайного выбора контакта
-    data_from_home_page = app.contact.get_contact_list()[index]  # Получаем данные с главной страницы
-    data_from_edit_page = app.contact.get_contact_info_from_edit_page(index)  # Получаем данные с формы редактирования
-    # Сравниваем список телефонов с главной страницы со склеенной строкой из формы редактирования
-    assert data_from_home_page.all_phones == merge_phones_like_on_home_page(data_from_edit_page)
+    data_from_home_page = sorted(app.contact.get_contact_list(), key=Contact.id_or_max)  # Получаем данные с главной страницы
+    data_from_db = sorted(db.get_contact_list(), key=Contact.id_or_max)  # Получаем данные с формы редактирования
+    assert data_from_home_page.last_name == data_from_db.last_name  # Сравнение фамилии
+    assert data_from_home_page.first_name == data_from_db.first_name  # Сравнение имени
+    assert data_from_home_page.address == data_from_db.address  # Сравнение адреса
     # Сравниваем список эл. адресов с главной страницы со склеенной строкой из формы редактирования
-    assert data_from_home_page.all_emails == merge_emails_like_on_home_page(data_from_edit_page)
-    assert data_from_home_page.first_name == data_from_edit_page.first_name  # Сравнение имени
-    assert data_from_home_page.last_name == data_from_edit_page.last_name  # Сравнение фамилии
-    assert data_from_home_page.address == data_from_edit_page.address  # Сравнение адреса
+    assert data_from_home_page.all_emails == merge_emails_like_on_home_page(data_from_db)
+    # Сравниваем список телефонов с главной страницы со склеенной строкой из формы редактирования
+    assert data_from_home_page.all_phones == merge_phones_like_on_home_page(data_from_db)
 
 
 # Функция удаления ненужных символов перед сравнением

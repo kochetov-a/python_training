@@ -83,7 +83,7 @@ def pytest_generate_tests(metafunc):
 
 # Импортируем тестовые данные из файла .py с тестовыми данными (groups.py или contacts.py)
 def load_from_module(module):
-    return importlib.import_module("data.%s" % module).data_for_group
+    return importlib.import_module("data.%s" % module).data_for_contact
 
 
 # Получаем тестовые данные из json-файла (groups.json или contacts.json)

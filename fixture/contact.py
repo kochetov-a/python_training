@@ -24,11 +24,20 @@ class ContactHelper:
         self.change_field_value("firstname", contact.first_name)
         self.change_field_value("middlename", contact.second_name)
         self.change_field_value("lastname", contact.last_name)
+        self.change_field_value("company", contact.company_name)
+        self.change_field_value("home", contact.home_phone)
+        self.change_field_value("mobile", contact.mobile_phone)
+        self.change_field_value("work", contact.work_phone)
+        self.change_field_value("phone2", contact.secondary_phone)
+        self.change_field_value("address", contact.address)
+        self.change_field_value("email", contact.email)
+        self.change_field_value("email2", contact.email_2)
+        self.change_field_value("email3", contact.email_3)
 
     # Функция изменения полей контакта
     def change_field_value(self, field_name, text):
         wd = self.app.wd
-        if text is not None: # Если переменная "text" не пустая,то передаём её значение в поля
+        if text is not None:  # Если переменная "text" не пустая,то передаём её значение в поля
             wd.find_element_by_name(field_name).click()
             wd.find_element_by_name(field_name).clear()
             wd.find_element_by_name(field_name).send_keys(text)
@@ -127,6 +136,7 @@ class ContactHelper:
                        work_phone=work_phone, secondary_phone=secondary_phone,
                        address=address, email=email, email_2=email_2, email_3=email_3)
 
+    # Функция удаления контакта по id
     def delete_contact_by_id(self, id):
         wd = self.app.wd
         wd.find_element_by_css_selector("input[value='%s']" % id).click()
@@ -134,3 +144,9 @@ class ContactHelper:
         wd.switch_to_alert().accept()
         self.return_to_home_page()
         self.contact_cache = None
+
+    # Функция модификации контакта по id
+    # def modify_contact_by_id(self, id, new_contact_data):
+    #     wd = self.app.wd
+    #     checkbox = wd.find_element_by_css_selector("input[value='%s']" % id)
+    #     row = checkbox.find_element_by_xpath("//table[@id='maintable']/tbody/tr/td[8]/a/img")

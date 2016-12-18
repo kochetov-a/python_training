@@ -28,7 +28,7 @@ class Contact:
 
     # Переопределение функции вывода значений для контактов
     def __repr__(self):
-        return "%s:%s:%s" % (self.id, self.first_name, self.last_name)
+        return "%s:%s:%s:%s" % (self.id, self.first_name, self.second_name, self.last_name)
 
     # Переопределение функции сравнения контактов
     def __eq__(self, other):
