@@ -146,7 +146,10 @@ class ContactHelper:
         self.contact_cache = None
 
     # Функция модификации контакта по id
-    # def modify_contact_by_id(self, id, new_contact_data):
-    #     wd = self.app.wd
-    #     checkbox = wd.find_element_by_css_selector("input[value='%s']" % id)
-    #     row = checkbox.find_element_by_xpath("//table[@id='maintable']/tbody/tr/td[8]/a/img")
+    def modify_contact_by_id(self, id, new_contact_data):
+        wd = self.app.wd
+        wd.find_element_by_xpath("//a[@href='edit.php?id=%s']" % id).click()  # Открываем форму редактирования по id
+        self.fill_contact_form(new_contact_data)  # Изменяем данные контакта
+        wd.find_element_by_name("update").click()  # Нажимаем кнопку "Update" для применение изменений
+        self.return_to_home_page()  # Возвращаемся на главную страницу
+        self.contact_cache = None
