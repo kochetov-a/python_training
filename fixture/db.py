@@ -37,15 +37,15 @@ class DbFixture():
         cursor = self.connection.cursor()
         try:  # Пробуем ввыполнить запрос к БД
             # Получение данных групп
-            cursor.execute("select id, firstname, middlename, lastname, company, "
+            cursor.execute("select id, firstname, lastname, "
                            "address, home, mobile, work, phone2, email, email2, "
                            "email3 from addressbook where deprecated='0000-00-00 00:00:00'")
-            for row in cursor:
-                (id, first_name, second_name, last_name, company_name, address, home_phone, mobile_phone,
+            for row in cursor:  # Заполняем переменную row данными из таблицы
+                (id, first_name, last_name, address, home_phone, mobile_phone,
                  work_phone, secondary_phone, email, email_2, email_3) = row
-                contact_list.append(Contact(id=str(id), first_name=first_name, second_name=second_name, last_name=last_name,
-                                    company_name=company_name, address=address, home_phone=home_phone,
-                                    mobile_phone=mobile_phone, work_phone=work_phone, secondary_phone=secondary_phone,
+                contact_list.append(Contact(id=str(id), first_name=first_name, last_name=last_name,
+                                    address=address, home_phone=home_phone, mobile_phone=mobile_phone,
+                                    work_phone=work_phone, secondary_phone=secondary_phone,
                                     email=email, email_2=email_2, email_3=email_3))
         finally:
             cursor.close()
