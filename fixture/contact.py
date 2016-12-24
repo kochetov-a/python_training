@@ -153,3 +153,13 @@ class ContactHelper:
         wd.find_element_by_name("update").click()  # Нажимаем кнопку "Update" для применение изменений
         self.return_to_home_page()  # Возвращаемся на главную страницу
         self.contact_cache = None
+
+    # Функция добавления контакта в группу
+    def add_to_group(self, contact_id, group_id):
+        wd = self.app.wd
+        self.return_to_home_page()  # Возвращаемся на главную страницу
+        wd.find_element_by_css_selector("input[value='%s']" % contact_id).click()   # Выбираем контакт
+        wd.find_element_by_xpath("//select[@name='to_group']//option[@value='%s']" % group_id).click()  # Выбираем группу
+        wd.find_element_by_name("add").click()  # Добавляем контакт в выбранную группу
+        self.return_to_home_page()  # Возвращаемся на главную страницу
+        self.contact_cache = None
