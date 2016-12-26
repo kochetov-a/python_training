@@ -19,23 +19,27 @@ def test_compare_data_from_home_page(app, db):
         assert data_from_home_page[i].all_phones == merge_phones_like_on_home_page(data_from_db[i])
 
 
-# Функция удаления ненужных символов перед сравнением
-def clear(s):
+# Функция удаления ненужных символов перед сравнением телефонов
+def clear_phones(s):
+    return re.sub("[() -]", "", s)
+
+# Функция удаления ненужных символов перед сравнением эл. адресов
+def clear_mails(s):
     return re.sub(" ", "", s)
 
 
-# Склеевание строки из элементов БД
+# Склеевание строки из элементов БД (телефоны)
 def merge_phones_like_on_home_page(db):
     return "\n".join(filter(lambda x: x != "",  # Отфильтровываются пустые строки, то что осталось склеивается
-                            map(lambda x: clear(x),  # Элементы очищаются от ненужных символов
+                            map(lambda x: clear_phones(x),  # Элементы очищаются от ненужных символов
                                     filter(lambda x: x is not None,  # Из списка фильтруются пустые элементы
                                         [db.home_phone, db.mobile_phone,
                                             db.work_phone, db.secondary_phone]))))
 
 
-# Склеевание строки из элементов БД
+# Склеевание строки из элементов БД (эл. адреса)
 def merge_emails_like_on_home_page(db):
     return "\n".join(filter(lambda x: x != "",  # Отфильтровываются пустые строки, то что осталось склеивается
-                            map(lambda x: clear(x),  # Элементы очищаются от ненужных символов
+                            map(lambda x: clear_mails(x),  # Элементы очищаются от ненужных символов
                                 filter(lambda x: x is not None,  # Из списка фильтруются пустые элементы
                                        [db.email, db.email_2, db.email_3]))))
