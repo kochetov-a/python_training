@@ -52,12 +52,6 @@ class ORMFixture:
     def get_group_list(self):
         return self.convert_groups_to_model(select(g for g in ORMFixture.ORMGroup))
 
-    # Преобразование объекта в модель класса контактов
-    def convert_contacts_to_model(self, contacts):
-        def convert(contact):
-            return Contact(id=str(contact.id), first_name=contact.first_name, last_name=contact.last_name)
-        return list(map(convert, contacts))
-
     # Получение списка объектов для контактов
     @db_session
     def get_contact_list(self):
@@ -67,6 +61,13 @@ class ORMFixture:
     def get_contacts_in_group(self, group):
         orm_group = list(select(g for g in ORMFixture.ORMGroup if g.id == group.id))[0]
         return self.convert_contacts_to_model(orm_group.contacts)
+
+    # Преобразование объекта в модель класса контактов
+    def convert_contacts_to_model(self, contacts):
+        def convert(contact):
+            return Contact(id=str(contact.id), first_name=contact.first_name, last_name=contact.last_name,
+                           deprecated=str(contact.deprecated))
+        return list(map(convert, contacts))
 
     @db_session
     def get_contacts_not_in_group(self, group):
