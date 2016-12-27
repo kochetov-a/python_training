@@ -67,7 +67,7 @@ class ORMFixture:
         def convert(contact):
             return Contact(id=str(contact.id), first_name=contact.first_name, last_name=contact.last_name,
                            deprecated=str(contact.deprecated))
-        return list(map(convert, contacts))
+        return list(map(convert, filter(lambda c: c.deprecated is None, contacts)))
 
     @db_session
     def get_contacts_not_in_group(self, group):
